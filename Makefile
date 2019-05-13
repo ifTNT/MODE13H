@@ -3,7 +3,7 @@ all:clean test.exe run
 test.exe:test/test.obj
 	@dosbox -c "mount C $(shell pwd)" \
 			-c "C:" \
-			-c "TLINK test\test.obj, test.exe > __LINKER.TXT" \
+			-c "TLINK /s test\test.obj, test.exe > __LINKER.TXT" \
 			-c "exit" > /dev/null
 	@echo [Linking]
 	@cat __LINKER.TXT
