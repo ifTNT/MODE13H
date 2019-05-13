@@ -18,8 +18,12 @@ START:
     setDirectMode
     clearScreen
 
-    mov ax, 0
-    mov es, ax
+    ;Draw nyancat
+    setPos di, 0, 0 ;X,Y
+    mov ax, images
+    mov ds, ax  ;Segment of bitmap
+    mov si, nyan ;Head offset of bitmap
+    call printBitmap
 
     ;Wait for user input
     mov ah, 00h
@@ -124,6 +128,9 @@ segment images align=16
     bug2:
         dw 20, 20 ;width, height
         incbin "media/bug2_image.bin"
+    nyan:
+        dw 320, 200 ;width, height
+        incbin "media/nyan.bin"
 
 segment stack stack align=16
     resb 256
