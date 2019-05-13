@@ -10,8 +10,9 @@ A 16-bits DOS assembly graphic library for NASM+DosBox
 
 ## Requirement
 - NASM>=2.14.02
+- DosBox>=0.74
 - TLINK=2.0 from TASM
-
+resolution
 ## Usage
 1. Add `%include "mode13h.asm"` at the second instruction of code segment
 2. Put jmp instruction before including for the purpose of jump to your code
