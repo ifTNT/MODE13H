@@ -7,6 +7,8 @@
 
 segment doubleBuf align=16
     resb FBWidth*FBHeight
+segment data align=16
+    ptrBufSeg dw 0 ;Storage of destination buffer
 
 segment code
 ;======================================================
@@ -31,29 +33,34 @@ segment code
 
 ;===================================
 ;Action: Set to direct output mode
-;Exit: es: Segment of frame buffer
 ;===================================
 %macro setDirectMode 0
     push ax
+    push ds
+    mov ax, data
+    mov ds, ax
     mov ax, FrameBuffer
-    mov es, ax
+    mov word [ds:ptrBufSeg], ax
+    pop ds
     pop ax
 %endmacro
 
 ;==========================================================
 ;Action: Set to double buffering mode
-;Exit: es: Segment of second frame buffer
 ;==========================================================
 %macro setDoubleBufMode 0
     push ax
+    push ds
+    mov ax, data
+    mov ds, ax
     mov ax, doubleBuf
-    mov es, ax
+    mov word [ds:ptrBufSeg], ax
+    pop ds
     pop ax
 %endmacro
 
 ;=====================================================
 ;Action: Flush second buffer to frame buffer
-;Parameter: es: Segment of second buffer
 ;=====================================================
 flushBuffer:
     ;Backup registers going to use
@@ -63,8 +70,12 @@ flushBuffer:
     push cx
     push es
     push ds
-    
-    mov cx, es
+
+    mov cx, data
+    mov ds, cx
+    mov cx, word [ds:ptrBufSeg]
+    cmp cx, FrameBuffer
+    je .ignore ;Fool-proofing of direct mode
     mov ds, cx ;Set source segment
     mov cx, FrameBuffer
     mov es, cx ;Set destination to frame buffer
@@ -74,6 +85,7 @@ flushBuffer:
     mov cx, FBHeight*FBWidth
     rep movsb ;Copy whole buffer
 
+.ignore:
     pop ds
     pop es
     pop cx
@@ -117,11 +129,17 @@ fillColor:
     pushf
     push di
     push cx
+    push es
     
+    mov cx, data
+    mov es, cx
+    mov cx, word [es:ptrBufSeg]
+    mov es, cx ;Set destinaton segment
     mov di, 0
     mov cx, FBHeight*FBWidth
     rep stosb ;Copy whole screen
 
+    pop es
     pop cx
     pop di
     popf
@@ -139,9 +157,7 @@ fillColor:
 
 ;====================================================================
 ;Action: Print a 32*32 color block which each color takes 2*2 space
-;Parameters:
-;           es: Segment of frame buffer
-;           di: Start position
+;Parameters: di: Start position
 ;Exit: none
 ;====================================================================
 printColorBlock:
@@ -150,7 +166,12 @@ printColorBlock:
     push ax
     push di
     push cx
+    push es
     
+    mov cx, data
+    mov es, cx
+    mov cx, word [es:ptrBufSeg]
+    mov es, cx ;Set destinaton segment
     mov al, 0 ;Reset color
     mov cx, 16
 ;--------
@@ -175,6 +196,7 @@ printColorBlock:
 ;--------    
     
     ;Restore used registers
+    pop es
     pop cx
     pop di
     pop ax
@@ -183,7 +205,7 @@ printColorBlock:
     
 ;=========================================
 ;Action: Fill all screen with 256 color
-;Parameters: es: Segment of frame buffer
+;Parameters: none
 ;Exit: none
 ;=========================================
 fillRainbow:
@@ -192,7 +214,12 @@ fillRainbow:
     push ax
     push di
     push cx
+    push es
 
+    mov cx, data
+    mov es, cx
+    mov cx, word [es:ptrBufSeg]
+    mov es, cx ;Set destinaton segment
     mov di, 0
     mov cx, FBHeight
 ;--------
@@ -217,6 +244,7 @@ fillRainbow:
     loop .LH
 ;--------
     ;Restore used registers
+    pop es
     pop cx
     pop di
     pop ax
@@ -227,7 +255,6 @@ fillRainbow:
 ;Action: Print a bitmap with transparent(255=transparent)
 ;        First two word of bitmap indicate [width, hight]
 ;Parameters:
-;   es: Segment to frame buffer
 ;   di: Start position
 ;   ds: Segment to bitmap
 ;   si: Offset of head of bitmap
@@ -242,7 +269,12 @@ printBitmap:
     push bx
     push cx
     push dx
+    push es
 
+    mov cx, data
+    mov es, cx
+    mov cx, word [es:ptrBufSeg]
+    mov es, cx ;Set destinaton segment
     mov ax, word [ds:si+0] ;width
     mov bx, word [ds:si+2] ;height
     add si, 4 ;Offset of image data segment
@@ -270,6 +302,7 @@ printBitmap:
 ;--------
 
     ;Restore used register
+    pop es
     pop dx
     pop cx
     pop bx

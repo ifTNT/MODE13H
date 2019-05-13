@@ -36,11 +36,9 @@ Action: Switch to text mode(80x25)
 
 ### setDirectMode
 Action: Set to direct output mode  
-Exit: es: Segment of frame buffer
 
 ### setDoubleBufMode
 Action: Set to double buffering mode  
-Exit: es: Segment of second frame buffer
 
 ### clearScreen
 Action: Set all pixel to black
@@ -67,28 +65,23 @@ Exit: None
 
 ### printColorBlock
 Action: Print a 32 * 32 color block which each color takes 2 * 2 space  
-Parameters:
-- es: Segment of frame buffer
-- di: Start position
+Parameters: di: Start position
 Exit: none
 
 ### fillRainbow
 Action: Fill all screen with 256 color  
-Parameters: es: Segment of frame buffer  
+Parameters: none  
 Exit: none
 
 ### printBitmap
 Action: Print a bitmap with transparent(255=transparent)  
         First two word of bitmap indicate [width, hight]
 Parameters:
-- es: Segment to frame buffer
 - di: Start position
 - ds: Segment to bitmap
 - si: Offset of head of bitmap
 Exit:
 - di: End position
 - si: End of bitmap
-
-
 
 ## TODOs

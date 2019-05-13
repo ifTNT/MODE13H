@@ -18,6 +18,9 @@ START:
     setDirectMode
     clearScreen
 
+    mov ax, 0
+    mov es, ax
+
     ;Wait for user input
     mov ah, 00h
     int 16h
@@ -38,6 +41,8 @@ START:
 %if(doubleBuffering)
     setDoubleBufMode
     clearScreen
+    mov ax, 0
+    mov es, ax
 %endif
 
     call fillRainbow
@@ -112,7 +117,7 @@ ANIMATION:
     int 21h
 
 
-segment images
+segment images align=16
 	bug:
         dw 20, 20 ;width, height
 		incbin "media/bug_image.bin"
