@@ -34,46 +34,46 @@ Action: Switch to VGA video mode(320x200,256 colors)
 Action: Switch to text mode(80x25)
 
 ### setDirectMode
-Action: Set to direct output mode
+Action: Set to direct output mode  
 Exit: es: Segment of frame buffer
 
 ### setDoubleBufMode
-Action: Set to double buffering mode
+Action: Set to double buffering mode  
 Exit: es: Segment of second frame buffer
 
 ### clearScreen
 Action: Set all pixel to black
 
 ### setPos
-Action: Calculate position of 2D coordinate in frame buffer
-Parameters: index register,X,Y
+Action: Calculate position of 2D coordinate in frame buffer  
+Parameters: index register,X,Y  
 Exit: index register=flatten position
 
 ### nextRow
-Action: move index of frame buffer to next row
-Parameters: index register, width
+Action: move index of frame buffer to next row  
+Parameters: index register, width  
 Exit: index register=new position
 
 ## Functions
 ### flushBuffer
-Action: Flush second buffer to frame buffer
+Action: Flush second buffer to frame buffer  
 Parameter: es: Segment of second buffer
 
 ### fillColor
-Action: Set all pixel to specific color
-Parameters: al: Color to set
+Action: Set all pixel to specific color  
+Parameters: al: Color to set  
 Exit: None
 
 ### printColorBlock
-Action: Print a 32*32 color block which each color takes 2*2 space
+Action: Print a 32 * 32 color block which each color takes 2 * 2 space  
 Parameters:
 - es: Segment of frame buffer
 - di: Start position
 Exit: none
 
 ### fillRainbow
-Action: Fill all screen with 256 color
-Parameters: es: Segment of frame buffer
+Action: Fill all screen with 256 color  
+Parameters: es: Segment of frame buffer  
 Exit: none
 
 ### printBitmap
