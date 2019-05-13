@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "bin",
+      "type": "shell",
+      "command": "make",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "dosbox",
+      "type": "shell",
+      "command": "make run",
+      "group": {
+        "kind":"test",
+        "isDefault": true
+      }
+    }
+  ]
+}
