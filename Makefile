@@ -1,20 +1,28 @@
-all:clean test.exe run
+all:clean test/test.exe run
 
-test.exe:test/test.obj
+
+dragon:dragon/dragon.exe
+	@echo [Running]
 	@dosbox -c "mount C $(shell pwd)" \
-			-c "C:" \
-			-c "TLINK /s test\test.obj, test.exe > __LINKER.TXT" \
-			-c "exit" > /dev/null
-	@echo [Linking]
-	@cat __LINKER.TXT
-	@rm -f __LINKER.TXT
+		   -c "C:" \
+		   -c "dragon\\dragon.exe" \
+		   -c "exit"
 
 run:
 	@echo [Running]
 	@dosbox -c "mount C $(shell pwd)" \
 		   -c "C:" \
-		   -c "test.exe" \
+		   -c "test\\test.exe" \
 		   -c "exit"
+
+%.exe:%.obj
+	dosbox -c "mount C $(shell pwd)" \
+			-c "C:" \
+			-c "TLINK /s $(subst /,\\,$^), $(subst /,\\,$@) > __LINKER.TXT" \
+			-c "exit" > /dev/null
+	@echo [Linking]
+	@cat __LINKER.TXT
+	@rm -f __LINKER.TXT
 
 %.obj:%.asm 
 	@echo [Assembling]
@@ -22,4 +30,4 @@ run:
 
 clean:
 	@echo Cleaning up...
-	rm -f TEST.EXE test/test.obj TEST.MAP
+	rm -f test/TEST.EXE test/test.obj test/TEST.MAP

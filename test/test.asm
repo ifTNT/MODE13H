@@ -20,7 +20,7 @@ START:
 
     ;Draw nyancat
     setPos di, 0, 0 ;X,Y
-    mov ax, images
+    mov ax, banner
     mov ds, ax  ;Segment of bitmap
     mov si, nyan ;Head offset of bitmap
     call printBitmap
@@ -128,10 +128,11 @@ segment images align=16
     bug2:
         dw 20, 20 ;width, height
         incbin "media/bug2_image.bin"
+        
+segment banner align=16
     nyan:
         dw 320, 200 ;width, height
         incbin "media/nyan.bin"
-
 segment stack stack align=16
     resb 256
     stack_top: 
