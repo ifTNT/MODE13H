@@ -51,11 +51,11 @@ START:
 
     call fillRainbow
 
-    setPos di, 144, 100 ;X,Y
+    setPos di, 144, (100-16) ;X,Y
     call printColorBlock
 
     ;Draw bitmap
-    setPos di, 200, 100 ;X,Y
+    setPos di, 200, (100-10) ;X,Y
     mov ax, images
     mov ds, ax  ;Segment of bitmap
     mov si, bug ;Head offset of bitmap
@@ -78,7 +78,7 @@ MOVE_CHAR:
     clearScreen
 
     ;Draw bitmap
-    setPos di, bx, 100 ;X,Y
+    setPos di, bx, (100-10) ;X,Y
     mov ax, images
     mov ds, ax  ;Segment of bitmap
     mov si, bug ;Head offset of bitmap
@@ -100,7 +100,7 @@ ANIMATION:
     push ax
 
     ;Draw bitmap
-    setPos di, 150, 100 ;X,Y
+    setPos di, 150, (100-10) ;X,Y
     mov ax, images
     mov ds, ax  ;Segment of bitmap
     pop ax

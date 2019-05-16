@@ -30,4 +30,5 @@ run:
 
 clean:
 	@echo Cleaning up...
-	rm -f test/TEST.EXE test/test.obj test/TEST.MAP
+	rm -f test/TEST.EXE test/test.obj test/TEST.MAP \
+	      dragon/dragon.obj dragon/DRAGON.EXE dragon/DRAGON.MAP

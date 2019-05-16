@@ -22,12 +22,12 @@ START:
     mov ax, dragon
     mov ds, ax
     mov word [ds:xpos], 10
-    mov byte [ds:ypos], 100 
+    mov byte [ds:ypos], 70 
 
     ;Draw bitmap
-    setPos di, [xpos], [ypos]
     mov ax, dragon
     mov ds, ax  ;Segment of bitmap
+    setPos di, [ds:xpos], [ds:ypos]
     mov si, stand ;Head offset of bitmap
     call printBitmap
     
@@ -46,18 +46,40 @@ MOVE_CHAR:
     clearScreen
 
     ;Draw bitmap
-    setPos di, [ds:xpos], [ds:ypos] ;X,Y
     mov ax, dragon
     mov ds, ax  ;Segment of bitmap
+    setPos di, [ds:xpos], [ds:ypos] ;X,Y
     pop ax
     mov si, ax ;Head offset of bitmap
     call printBitmap
 
     call flushBuffer
 
-    mov ax, [xpos]
-    add ax, speed
-    mov [xpos], ax
+    ;Update x position
+    mov ax, [ds:xpos]
+    mov bx, [ds:xspeed]
+    add ax, bx
+    mov [ds:xpos], ax
+
+    ;Update y speed
+    mov al, [ds:yspeed]
+    mov bl, [ds:yacc]
+    add al, bl
+    mov [ds:yspeed], al
+
+    ;Update y pos
+    mov bl, al
+    mov al, [ds:ypos]
+    add al, bl
+    ;if hit floor
+    mov bl, [ds:floor]
+    cmp al, bl
+    jna setYpos
+    mov byte [ds:yspeed], 0
+    mov al, bl
+setYpos:
+    mov [ds:ypos], al
+
     test cx, 00000100b
     mov ax, walk1
     jz .next
@@ -74,6 +96,10 @@ MOVE_CHAR:
 segment dragon align=16
     xpos: dw 0
     ypos: db 0
+    floor: db 100
+    xspeed: dw speed
+    yspeed: db 0
+    yacc: db 2
 	stand:
         dw 20, 20 ;width, height
 		incbin "media/dragon-stand.bin"

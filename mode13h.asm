@@ -101,9 +101,10 @@ flushBuffer:
 ;=============================================================
 %macro setPos 3
     push ax
-    mov ah, %3 ;Y-pos
-    mov al, ah
-    sal al, 6   ;y*320=(y<<8)+(y<<6)
+    mov ah, 0
+    mov al, %3 ;Y-pos
+    shl ax, 6
+    add ah, %3 ;y*320 = (y<<8)+(y<<6)
     add ax, %2 ;X-pos
     mov %1, ax
     pop ax
