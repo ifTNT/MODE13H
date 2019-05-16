@@ -71,21 +71,39 @@ MOVE_CHAR:
     mov bl, al
     mov al, [ds:ypos]
     add al, bl
-    ;if hit floor
+
+    ;Floor detection
+;--------
     mov bl, [ds:floor]
     cmp al, bl
-    jna setYpos
+    jna setYpos ;If not hit floor
+
+;----
+    mov ah, 1
+	int 16h ;Get key statue
+    jz clearSpeed ;if no key hit
+    mov ah, 0
+    int 16h ;Clear keyboard buffer
+    mov byte [ds:yspeed], -10 ;Do a little jump
+    mov al, bl ;Put dragon on floor
+    jmp setYpos
+clearSpeed:
     mov byte [ds:yspeed], 0
-    mov al, bl
+    mov al, bl ;Put dragon on floor
+;----
+
 setYpos:
     mov [ds:ypos], al
+;--------
 
+    ;Switch animation frame each 4 ticks
     test cx, 00000100b
     mov ax, walk1
     jz .next
     mov ax, walk2
 .next:
-    loop MOVE_CHAR
+    dec cx
+    jnz MOVE_CHAR
     
     enterTextMode
 
