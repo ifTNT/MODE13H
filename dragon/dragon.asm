@@ -38,9 +38,9 @@ START:
     int 16h
 
 ;----------------------------    
-%define speed 1
-    mov cx, 280/speed
     mov ax, walk1
+RESET_CNT:
+    mov cx, 0
 MOVE_CHAR:
     push ax
     clearScreen
@@ -48,10 +48,18 @@ MOVE_CHAR:
     ;Draw bitmap
     mov ax, dragon
     mov ds, ax  ;Segment of bitmap
-    setPos di, [ds:xpos], [ds:ypos] ;X,Y
+    setPos di, 10, [ds:ypos] ;X,Y
     pop ax
     mov si, ax ;Head offset of bitmap
     call printBitmap
+
+    ;Draw floor
+    mov ax, dragon
+    mov ds, ax  ;Segment of bitmap
+    setPos di, 0, 120-1 ;X,Y
+    mov si, floor_img ;Head offset of bitmap
+    mov dx, cx
+    call printCircularBitmap
 
     call flushBuffer
 
@@ -82,9 +90,10 @@ MOVE_CHAR:
     mov ah, 1
 	int 16h ;Get key statue
     jz clearSpeed ;if no key hit
-    mov ah, 0
+    mov ah, 00h
     int 16h ;Clear keyboard buffer
     mov byte [ds:yspeed], -10 ;Do a little jump
+    inc word [ds:xspeed] ;Incearse xspeed
     mov al, bl ;Put dragon on floor
     jmp setYpos
 clearSpeed:
@@ -102,8 +111,10 @@ setYpos:
     jz .next
     mov ax, walk2
 .next:
-    dec cx
-    jnz MOVE_CHAR
+    add cx, word [ds:xspeed]
+    cmp cx, 320-1
+    jae RESET_CNT
+    jmp MOVE_CHAR
     
     enterTextMode
 
@@ -115,7 +126,7 @@ segment dragon align=16
     xpos: dw 0
     ypos: db 0
     floor: db 100
-    xspeed: dw speed
+    xspeed: dw 2
     yspeed: db 0
     yacc: db 2
 	stand:
@@ -127,6 +138,9 @@ segment dragon align=16
     walk2:
         dw 20, 20;width, height
         incbin "media/dragon-walk-2.bin"
+    floor_img:
+        dw 320, 10;width, hight
+        incbin "media/floor.bin"
         
 segment stack stack align=16
     resb 256
